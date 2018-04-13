@@ -17,7 +17,7 @@ public class Main {
         String inputLine, html;
         while ((inputLine = in.readLine()) != null) {
         	System.out.println(inputLine);
-        	//System.out.println(Jsoup.parse(inputLine).body().text());
+        	System.out.println(Jsoup.parse(inputLine).body().text());
         }
         in.close();
     }
