@@ -3,11 +3,13 @@ import java.security.Timestamp;
 import java.util.Observable;
 
 public class EURUSD extends Observable{
+	String Name;
 	float Bid;
 	float Offer;
 	Timestamp timestamp;
 	
-	public void setParameters(float bid,float offer, Timestamp timest) {
+	public void setParameters(String name, float bid,float offer, Timestamp timest) {
+		this.Name = name;
 		this.Bid = bid;
 		this.Offer = offer;
 		this.timestamp = timest;
