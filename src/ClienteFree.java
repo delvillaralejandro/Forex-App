@@ -4,6 +4,7 @@ import java.util.Observer;
 
 public class ClienteFree implements Observer{
 	
+	private int clientID;
 	private String quoteName;
 	private long timestamp;
 	private BigDecimal bidBig;
@@ -14,7 +15,9 @@ public class ClienteFree implements Observer{
 	private BigDecimal Low;
 	private BigDecimal Open;
 	
+	
 	public ClienteFree(Observable quote) {
+		this.clientID = (int) Math.ceil(Math.random()*1000);
 		quote.addObserver(this);
 	}
 
@@ -24,7 +27,7 @@ public class ClienteFree implements Observer{
 		}else 
 		{
 			Wrapper wrap = (Wrapper) arg;
-
+			
 			this.quoteName = wrap.Name;
 			this.timestamp = wrap.timestamp;
 			this.bidBig = wrap.bidBig;
@@ -40,7 +43,10 @@ public class ClienteFree implements Observer{
 	}
 	
 	public void printParams() {
-		System.out.println(this.quoteName + " " 
+		System.out.println(
+				"ID de Cliente: " 
+				+ this.clientID + " "
+				+ this.quoteName + " " 
 				+ this.timestamp + " "
 				+ this.bidBig.toString()
 				+ this.bidPoints + " "

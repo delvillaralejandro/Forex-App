@@ -45,8 +45,6 @@ public class Main {
         int cont = 0;
         for(Observable q : quotes) {
         	q.addObserver(new ClienteFree(q));
-        	//q.setParameters(subData[cont]);
-        	//cont++;
         }
         
         //while(true) {
