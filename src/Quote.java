@@ -3,16 +3,16 @@ import java.math.BigDecimal;
 import java.security.Timestamp;
 import java.util.Observable;
 
-public abstract class Quote extends Observable{
-	String Name;
-	long timestamp;
-	BigDecimal bidBig;
-	int bidPoints;
-	BigDecimal offerBig;
-	int offerPoints;
-	BigDecimal High;
-	BigDecimal Low;
-	BigDecimal Open;
+public /*abstract*/ class Quote extends Observable{
+	private String Name;
+	private long timestamp;
+	private BigDecimal bidBig;
+	private int bidPoints;
+	private BigDecimal offerBig;
+	private int offerPoints;
+	private BigDecimal High;
+	private BigDecimal Low;
+	private BigDecimal Open;
 	
 	public void setParameters(String[] data) {
 		this.Name = data[0];
@@ -56,7 +56,7 @@ public abstract class Quote extends Observable{
 		return this.Open;
 	}
 	
-	public void printParams() {
+	/*public void printParams() {
 		System.out.println(getName() + " " 
 				+ getTimestamp() + " "
 				+ getBidBig().toString()
@@ -66,12 +66,12 @@ public abstract class Quote extends Observable{
 				+ getHigh() + " "
 				+ getLow() + " "
 				+ getOpen());
-	}
+	}*/
 	
 	public void measurementsChanged() {
 		setChanged();
-		notifyObservers();
-		//notifyObservers(new Wrapper(Temp,Humidity,Pressure));
+		//notifyObservers();
+		notifyObservers(new Wrapper(Name,timestamp,bidBig,bidPoints,offerBig,offerPoints,High,Low,Open));
 	}
 
 }
