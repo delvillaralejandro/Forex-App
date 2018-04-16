@@ -7,9 +7,7 @@ public class ClienteFree implements Observer{
 	public ClienteFree(Observable quote) {
 		quote.addObserver(this);
 	}
-	public void show(float valor) {
-		System.out.println("DisplayA muestra: " + valor + " grados de presion");
-	}
+
 	public void update(Observable o, Object arg) {
 		// TODO Auto-generated method stub
 		

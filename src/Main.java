@@ -14,9 +14,12 @@ public class Main {
         //String[] data = myAPI.ParseHTML(webrates);
         String[][] subData = myAPI.paramData(myAPI.ParseHTML(webrates)); //Lee el HTML, lo parsea y lo guarda en un arreglo de arreglos en donde cada uno es la informacion de cada quote
         
-        myAPI.printData(subData);
+        //myAPI.printData(subData);
         //EURUSD.setParameters(datap[0],data[1],)
         
+        Quote test = new EURUSD();
+        test.setParameters(subData[0]);
+        test.printParams();
         
     }
 
