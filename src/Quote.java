@@ -1,9 +1,7 @@
-
 import java.math.BigDecimal;
-import java.security.Timestamp;
 import java.util.Observable;
 
-public /*abstract*/ class Quote extends Observable{
+public class Quote extends Observable{
 	private String Name;
 	private long timestamp;
 	private BigDecimal bidBig;
@@ -14,16 +12,46 @@ public /*abstract*/ class Quote extends Observable{
 	private BigDecimal Low;
 	private BigDecimal Open;
 	
-	public void setParameters(String[] data) {
-		this.Name = data[0];
-		this.timestamp = Long.parseLong(data[1]);
-		this.bidBig = new BigDecimal(data[2]);
-		this.bidPoints = Integer.parseInt(data[3]);
-		this.offerBig = new BigDecimal(data[4]);
-		this.offerPoints = Integer.parseInt(data[5]);
-		this.High = new BigDecimal(data[6]);
-		this.Low = new BigDecimal(data[7]);
-		this.Open = new BigDecimal(data[8]);
+	public Quote(
+			String Name,
+			long timestamp,
+			BigDecimal bidBig,
+			int bidPoints,
+			BigDecimal offerBig,
+			int offerPoints,
+			BigDecimal High,
+			BigDecimal Low,
+			BigDecimal Open) {
+		this.Name = Name;
+		this.timestamp = timestamp;
+		this.bidBig = bidBig;
+		this.bidPoints = bidPoints;
+		this.offerBig = offerBig;
+		this.offerPoints = offerPoints;
+		this.High = High;
+		this.Low = Low;
+		this.Open = Open;
+	}
+	
+	public void setParameters(
+			String Name,	
+			long timestamp,
+			BigDecimal bidBig,
+			int bidPoints,
+			BigDecimal offerBig,
+			int offerPoints,
+			BigDecimal High,
+			BigDecimal Low,
+			BigDecimal Open) {
+		this.Name = Name;
+		this.timestamp = timestamp;
+		this.bidBig = bidBig;
+		this.bidPoints = bidPoints;
+		this.offerBig = offerBig;
+		this.offerPoints = offerPoints;
+		this.High = High;
+		this.Low = Low;
+		this.Open = Open;
 		
 		measurementsChanged();
 	}
@@ -55,8 +83,8 @@ public /*abstract*/ class Quote extends Observable{
 	public BigDecimal getOpen() {
 		return this.Open;
 	}
-	
-	/*public void printParams() {
+
+	public void printParams() {
 		System.out.println(getName() + " " 
 				+ getTimestamp() + " "
 				+ getBidBig().toString()
@@ -66,12 +94,13 @@ public /*abstract*/ class Quote extends Observable{
 				+ getHigh() + " "
 				+ getLow() + " "
 				+ getOpen());
-	}*/
+	}
 	
 	public void measurementsChanged() {
 		setChanged();
 		//notifyObservers();
 		notifyObservers(new Wrapper(Name,timestamp,bidBig,bidPoints,offerBig,offerPoints,High,Low,Open));
+		//notifyObservers(this);
 	}
 
 }

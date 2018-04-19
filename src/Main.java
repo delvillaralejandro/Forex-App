@@ -4,15 +4,22 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-public class Main {
+public class Main /*implements Runnable*/{
 
 	public static void main(String[] args) throws Exception {
-
 		API myAPI = new API();
         URL webrates = new URL("http://webrates.truefx.com/rates/connect.html?f=html");
         //String[] data = myAPI.ParseHTML(webrates);
-        String[][] subData = myAPI.paramData(myAPI.ParseHTML(webrates)); //Lee el HTML, lo parsea y lo guarda en un arreglo de arreglos en donde cada uno es la informacion de cada quote
+        //String[][] subData = myAPI.paramData(myAPI.ParseHTML(webrates)); //Lee el HTML, lo parsea y lo guarda en un arreglo de arreglos en donde cada uno es la informacion de cada quote
         List<Observable> quotes = new ArrayList<Observable>();
+        quotes = myAPI.parseHTML2(webrates);
+
+        for(Observable q : quotes) {
+        	q.addObserver(new ClienteFree(q));
+        }
+        
+       	run(myAPI,webrates,quotes);
+        
         //myAPI.printData(subData);
         //EURUSD.setParameters(data[0],data[1],)
         
@@ -20,7 +27,7 @@ public class Main {
         //test.setParameters(subData[0]);
         //test.printParams();
         
-        Observable EURUSD = new Quote();
+        /*Observable EURUSD = new Quote();
         Observable USDJPY = new Quote();
         Observable GBPUSD = new Quote();
         Observable EURGBP = new Quote();
@@ -52,7 +59,20 @@ public class Main {
         		((Quote) q).setParameters(subData[cont]);
         		cont++;
         	}
-        //}
-    }
+        //}*/
+       	
+	}
+	
+	public static void run(API myAPI, URL webrates,List<Observable> quotes) throws Exception{        
+        while(true){
+        	myAPI.setQuoteParameters(webrates, quotes);
+        	Thread.sleep(3000);
+        }
+	}
+	
+	public void run() {
+		//Do stuff here
+	}
 
+	
 }

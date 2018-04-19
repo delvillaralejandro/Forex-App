@@ -38,6 +38,12 @@ public class ClienteFree implements Observer{
 			this.Low = wrap.Low;
 			this.Open = wrap.Open;
 			
+			/*
+			 * evaluar(viejoValor-nuevoValor >= rangoPips){
+			 * 		enviarPopup();
+			 * }
+			 */
+			
 			printParams();
 		}
 	}
