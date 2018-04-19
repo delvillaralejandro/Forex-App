@@ -39,7 +39,7 @@ public class ClienteFree implements Observer{
 			this.Open = wrap.Open;
 			
 			/*
-			 * evaluar(viejoValor-nuevoValor >= rangoPips){
+			 * evaluar(viejoValor - nuevoValor >= rangoPips){
 			 * 		enviarPopup();
 			 * }
 			 */

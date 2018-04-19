@@ -98,7 +98,6 @@ public class Quote extends Observable{
 	
 	public void measurementsChanged() {
 		setChanged();
-		//notifyObservers();
 		notifyObservers(new Wrapper(Name,timestamp,bidBig,bidPoints,offerBig,offerPoints,High,Low,Open));
 		//notifyObservers(this);
 	}

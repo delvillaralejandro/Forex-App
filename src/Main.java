@@ -12,7 +12,7 @@ public class Main /*implements Runnable*/{
         //String[] data = myAPI.ParseHTML(webrates);
         //String[][] subData = myAPI.paramData(myAPI.ParseHTML(webrates)); //Lee el HTML, lo parsea y lo guarda en un arreglo de arreglos en donde cada uno es la informacion de cada quote
         List<Observable> quotes = new ArrayList<Observable>();
-        quotes = myAPI.parseHTML2(webrates);
+        quotes = myAPI.parseHTML(webrates);
 
         for(Observable q : quotes) {
         	q.addObserver(new ClienteFree(q));

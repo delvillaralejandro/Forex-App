@@ -12,24 +12,7 @@ import org.jsoup.select.Elements;
 
 public class API {
 	
-	/*public String[] ParseHTML(URL url) throws Exception{
-		
-		BufferedReader in = new BufferedReader(
-		new InputStreamReader(url.openStream()));
-        Document doc;
-        String inputLine, data;
-        String[] newData = null;
-        
-        while ((inputLine = in.readLine()) != null) {
-        	data = Jsoup.parse(inputLine).body().text(); //Parsing de los datos HTML a String
-        	newData = data.split(" "); //separa los valores por espacios y lo guarda al arreglo
-        }
-        in.close();
-        return newData;
-	}
-	*/
-	
-	public List<Observable> parseHTML2(URL url) throws Exception{
+	public List<Observable> parseHTML(URL url) throws Exception{
 		List<Observable> quotes = new ArrayList<Observable>();
 		BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
 		Document doc = Jsoup.parse(url, 5000);
