@@ -96,6 +96,18 @@ public class Quote extends Observable{
 				+ getOpen());
 	}
 	
+	public String returnParams(){
+        return (this.getName() + " "
+                + this.getTimestamp() + " "
+                + this.getBidBig().toString()
+                + this.getBidPoints() + " "
+                + this.getOfferBig().toString()
+                + this.getOfferPoints() + " "
+                + this.getHigh() + " "
+                + this.getLow() + " "
+                + this.getOpen());
+    }
+	
 	public void measurementsChanged() {
 		setChanged();
 		notifyObservers(new Wrapper(Name,timestamp,bidBig,bidPoints,offerBig,offerPoints,High,Low,Open));

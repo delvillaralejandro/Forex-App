@@ -13,12 +13,15 @@ public class Main /*implements Runnable*/{
         //String[][] subData = myAPI.paramData(myAPI.ParseHTML(webrates)); //Lee el HTML, lo parsea y lo guarda en un arreglo de arreglos en donde cada uno es la informacion de cada quote
         List<Observable> quotes = new ArrayList<Observable>();
         quotes = myAPI.parseHTML(webrates);
+        ClienteFree client = new ClienteFree();
 
         for(Observable q : quotes) {
-        	q.addObserver(new ClienteFree(q));
+        	q.addObserver(client);
+        	client.setOldValues(q);
         }
         
        	run(myAPI,webrates,quotes);
+       	
         
         //myAPI.printData(subData);
         //EURUSD.setParameters(data[0],data[1],)

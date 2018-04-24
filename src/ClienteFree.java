@@ -5,6 +5,18 @@ import java.util.Observer;
 public class ClienteFree implements Observer{
 	
 	private int clientID;
+	private String Name;
+	private String LastName;
+	private String Email;
+	private String Password;
+	private int pipChange;
+	
+	private String oldQuoteName;
+	private BigDecimal oldbidBig;
+	private int oldbidPoints;
+	private BigDecimal oldofferBig;
+	private int oldofferPoints;
+	
 	private String quoteName;
 	private long timestamp;
 	private BigDecimal bidBig;
@@ -19,6 +31,18 @@ public class ClienteFree implements Observer{
 	public ClienteFree(Observable quote) {
 		this.clientID = (int) Math.ceil(Math.random()*1000);
 		quote.addObserver(this);
+	}
+	
+	public ClienteFree(String name, String last, String email,String pass) {
+		this.clientID = (int) Math.ceil(Math.random()*1000);
+		this.Name = name;
+		this.LastName = last;
+		this.Email = email;
+		this.Password = pass;
+	}
+	
+	public ClienteFree() {
+		this.clientID = (int) Math.ceil(Math.random()*1000);
 	}
 
 	public void update(Observable observable, Object arg) {
@@ -39,12 +63,43 @@ public class ClienteFree implements Observer{
 			this.Open = wrap.Open;
 			
 			/*
-			 * evaluar(viejoValor - nuevoValor >= rangoPips){
-			 * 		enviarPopup();
-			 * }
+			 if(evaluateChange(){
+			 	popup()
+			 }
 			 */
 			
 			printParams();
+		}
+	}
+	
+	public boolean evaluateChange() {
+		if( Math.abs(this.oldbidPoints - this.bidPoints) >= this.pipChange) {
+			return true;
+		}
+		else {
+			if((this.oldbidBig.doubleValue() != this.bidBig.doubleValue())) {
+				return true;
+			}
+			return false;
+		}
+	}
+	
+	public void setPipChange(int pip) {
+		this.pipChange = pip;
+	}
+	
+	public void setOldValues(Object arg) {
+		if(arg == null) {
+			System.out.println("Null Argument");
+		}else {
+			Quote wrap = (Quote) arg;
+			
+			this.oldQuoteName = wrap.getName();
+			this.timestamp = wrap.getTimestamp();
+			this.oldbidBig = wrap.getBidBig();
+			this.oldbidPoints = wrap.getBidPoints();
+			this.oldofferBig = wrap.getOfferBig();
+			this.oldofferPoints = wrap.getOfferPoints();
 		}
 	}
 	
