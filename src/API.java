@@ -12,6 +12,7 @@ import org.jsoup.select.Elements;
 
 public class API {
 	
+	//API
 	public List<Observable> parseHTML(URL url) throws Exception{
 		List<Observable> quotes = new ArrayList<Observable>();
 		BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));

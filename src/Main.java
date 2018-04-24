@@ -7,6 +7,8 @@ import java.util.Observer;
 public class Main /*implements Runnable*/{
 
 	public static void main(String[] args) throws Exception {
+		
+		//Declarar API
 		API myAPI = new API();
         URL webrates = new URL("http://webrates.truefx.com/rates/connect.html?f=html");
         //String[] data = myAPI.ParseHTML(webrates);

@@ -4,6 +4,7 @@ import java.util.Observer;
 
 public class ClienteFree implements Observer{
 	
+	//parametros
 	private int clientID;
 	private String Name;
 	private String LastName;
