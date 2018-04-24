@@ -12,7 +12,6 @@ import org.jsoup.select.Elements;
 
 public class API {
 	
-	//API
 	public List<Observable> parseHTML(URL url) throws Exception{
 		List<Observable> quotes = new ArrayList<Observable>();
 		BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
@@ -24,16 +23,7 @@ public class API {
 		    Element row = rows.get(i);
 		    Elements cols = row.select("td");
 		    
-		    quotes.add(new Quote(
-		    		cols.get(0).text().toString(),
-		    		Long.parseLong(cols.get(1).text().toString()),
-		    		new BigDecimal(cols.get(2).text().toString()),
-		    		Integer.parseInt(cols.get(3).text().toString()),
-		    		new BigDecimal(cols.get(4).text().toString()),
-		    		Integer.parseInt(cols.get(5).text().toString()),
-		    		new BigDecimal(cols.get(6).text().toString()),
-		    		new BigDecimal(cols.get(7).text().toString()),
-		    		new BigDecimal(cols.get(8).text().toString())));
+		    quotes.add(new Quote(parseCol(cols)));
 		}
 		return quotes;
 	}
@@ -48,8 +38,14 @@ public class API {
 		for(Observable q : quotes) {
 			Elements cols = rows.get(cont).select("td");
 			q = ( (Quote) q );
-			((Quote) q).setParameters(
-					cols.get(0).text().toString(),
+			((Quote) q).setParameters(parseCol(cols));
+			cont++;
+		}
+		
+	}
+	
+	public Wrapper parseCol(Elements cols) {
+		return new Wrapper(cols.get(0).text().toString(),
 					Long.parseLong(cols.get(1).text().toString()),
 					new BigDecimal(cols.get(2).text().toString()),
 					Integer.parseInt(cols.get(3).text().toString()),
@@ -58,9 +54,6 @@ public class API {
 					new BigDecimal(cols.get(6).text().toString()),
 					new BigDecimal(cols.get(7).text().toString()),
 					new BigDecimal(cols.get(8).text().toString()));
-			cont++;
-		}
-		
 	}
 	
 	//Convertir el String[] con todos los datos a un arreglo de arreglos, separando los de cada quote

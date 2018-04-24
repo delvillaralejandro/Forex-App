@@ -4,13 +4,12 @@ import java.util.Observer;
 
 public class ClienteFree implements Observer{
 	
-	//parametros
 	private int clientID;
 	private String Name;
 	private String LastName;
 	private String Email;
 	private String Password;
-	private int pipChange;
+	private int pipChange = 50;
 	
 	private String oldQuoteName;
 	private BigDecimal oldbidBig;
@@ -63,24 +62,31 @@ public class ClienteFree implements Observer{
 			this.Low = wrap.Low;
 			this.Open = wrap.Open;
 			
-			/*
-			 if(evaluateChange(){
-			 	popup()
-			 }
-			 */
 			
-			printParams();
+			 if(evaluateChange()){
+				 this.oldQuoteName = this.quoteName;
+				 //this.oldtimestamp = this.timestamp;
+				 this.oldbidBig = this.bidBig;
+				 this.oldbidPoints = this.bidPoints;
+				 this.oldofferBig = this.offerBig;
+				 this.oldofferPoints = this.offerPoints;
+				 System.out.println("Old values set");
+				 printParams();
+			 }
+			 
+			
+			//printParams();
 		}
 	}
 	
 	public boolean evaluateChange() {
-		if( Math.abs(this.oldbidPoints - this.bidPoints) >= this.pipChange) {
+		if( Math.abs(oldbidPoints - bidPoints) >= pipChange) {
 			return true;
 		}
 		else {
-			if((this.oldbidBig.doubleValue() != this.bidBig.doubleValue())) {
-				return true;
-			}
+			//if((this.oldbidBig.doubleValue() != this.bidBig.doubleValue())) {
+			//	return true;
+			//}
 			return false;
 		}
 	}
@@ -96,11 +102,12 @@ public class ClienteFree implements Observer{
 			Quote wrap = (Quote) arg;
 			
 			this.oldQuoteName = wrap.getName();
-			this.timestamp = wrap.getTimestamp();
+			//this.timestamp = wrap.getTimestamp();
 			this.oldbidBig = wrap.getBidBig();
 			this.oldbidPoints = wrap.getBidPoints();
 			this.oldofferBig = wrap.getOfferBig();
 			this.oldofferPoints = wrap.getOfferPoints();
+			System.out.println("Old values set");
 		}
 	}
 	

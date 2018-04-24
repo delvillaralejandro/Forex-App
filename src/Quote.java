@@ -33,6 +33,19 @@ public class Quote extends Observable{
 		this.Open = Open;
 	}
 	
+	public Quote(Wrapper w) {
+		this.Name = w.Name;
+		this.timestamp = w.timestamp;
+		this.bidBig = w.bidBig;
+		this.bidPoints = w.bidPoints;
+		this.offerBig = w.offerBig;
+		this.offerPoints = w.offerPoints;
+		this.High = w.High;
+		this.Low = w.Low;
+		this.Open = w.Open;
+		
+	}
+	
 	public void setParameters(
 			String Name,	
 			long timestamp,
@@ -52,6 +65,20 @@ public class Quote extends Observable{
 		this.High = High;
 		this.Low = Low;
 		this.Open = Open;
+		
+		measurementsChanged();
+	}
+	
+	public void setParameters(Wrapper w) {
+		this.Name = w.Name;
+		this.timestamp = w.timestamp;
+		this.bidBig = w.bidBig;
+		this.bidPoints = w.bidPoints;
+		this.offerBig = w.offerBig;
+		this.offerPoints = w.offerPoints;
+		this.High = w.High;
+		this.Low = w.Low;
+		this.Open = w.Open;
 		
 		measurementsChanged();
 	}

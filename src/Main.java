@@ -22,6 +22,8 @@ public class Main /*implements Runnable*/{
         	client.setOldValues(q);
         }
         
+        //client.setPipChange(50);
+        
        	run(myAPI,webrates,quotes);
        	
         
