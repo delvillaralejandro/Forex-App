@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-public class Main /*implements Runnable*/{
+public class Main{
 
 	public static void main(String[] args) throws Exception {
 		
@@ -23,11 +23,11 @@ public class Main /*implements Runnable*/{
         }
         
         //client.setPipChange(50);
-        
-       	//run(myAPI,webrates,quotes);
+
+       	run(myAPI,webrates,quotes);
        	
-        test t = new test();
-        t.conexion();
+        //test t = new test();
+        //t.conexion();
         
         //myAPI.printData(subData);
         //EURUSD.setParameters(data[0],data[1],)

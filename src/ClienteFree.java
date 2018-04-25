@@ -70,7 +70,7 @@ public class ClienteFree implements Observer{
 				 this.oldbidPoints = this.bidPoints;
 				 this.oldofferBig = this.offerBig;
 				 this.oldofferPoints = this.offerPoints;
-				 System.out.println("Old values set");
+				 //System.out.println("Old values set");
 				 printParams();
 			 }
 			 
@@ -107,7 +107,7 @@ public class ClienteFree implements Observer{
 			this.oldbidPoints = wrap.getBidPoints();
 			this.oldofferBig = wrap.getOfferBig();
 			this.oldofferPoints = wrap.getOfferPoints();
-			System.out.println("Old values set");
+			//System.out.println("Old values set");
 		}
 	}
 	
