@@ -8,7 +8,7 @@ public class Main /*implements Runnable*/{
 
 	public static void main(String[] args) throws Exception {
 		
-		//Declarar API
+		// API
 		API myAPI = new API();
         URL webrates = new URL("http://webrates.truefx.com/rates/connect.html?f=html");
         //String[] data = myAPI.ParseHTML(webrates);
@@ -24,8 +24,10 @@ public class Main /*implements Runnable*/{
         
         //client.setPipChange(50);
         
-       	run(myAPI,webrates,quotes);
+       	//run(myAPI,webrates,quotes);
        	
+        test t = new test();
+        t.conexion();
         
         //myAPI.printData(subData);
         //EURUSD.setParameters(data[0],data[1],)

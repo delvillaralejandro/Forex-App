@@ -1,20 +1,26 @@
 import java.sql.*;
 //download .jr into classpath to use
 public class test {
-	public static void main(String args[]) {
+	public void conexion(){
 		System.out.println("hello world");
 		System.out.println("test2");
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/sono", "root", "root");
-			//sono is database name root1 = username & root2 = pasword
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery("select * from emp");
-			
-			while(rs.next()) {
-				System.out.println(rs.getInt(1) + " " + rs.getString(2) + " " + rs.getString(3));
-				con.close();
+		
+		try{
+			//1. Get a connection to database
+			Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/demo","root","123456");
+			//2. Create a Statement
+			Statement myStat = myConn.createStatement();
+			//3- Execute SQL query 
+			ResultSet myRs = myStat.executeQuery("select * from forex.client");
+			//4- Process the result set 
+			while(myRs.next()){
+				System.out.println(myRs.getString("account_id") + " , " + myRs.getString("first_name") + " , " + myRs.getString("last_name") + " , " + myRs.getString("email") + " , " + myRs.getString("premium"));
 			}
-		}catch(Exception e) {System.out.println(e);}
+			
+		}
+		catch(Exception exc){
+			exc.printStackTrace();
+			
+		}
 	}
 }
