@@ -23,7 +23,7 @@ public class Main{
         }
         
         //client.setPipChange(50);
-        
+
        	run(myAPI,webrates,quotes);
        	
         //test t = new test();

@@ -3,8 +3,6 @@ import java.sql.*;
 
 public class test {
 	public void conexion(){
-		System.out.println("hello world");
-		System.out.println("test2");
 		
 		try{
 			//1. Get a connection to database
