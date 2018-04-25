@@ -1,9 +1,7 @@
 import java.sql.*;
 //download .jr into classpath to use
-
 public class test {
 	public void conexion(){
-		
 		try{
 			//1. Get a connection to database
 			Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/demo","root","123456");
