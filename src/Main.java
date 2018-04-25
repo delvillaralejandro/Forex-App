@@ -25,6 +25,8 @@ public class Main{
         //client.setPipChange(50);
 
        	run(myAPI,webrates,quotes);
+        
+        //myAPI.AndroidListener();
        	
         //test t = new test();
         //t.conexion();
@@ -32,9 +34,6 @@ public class Main{
         //myAPI.printData(subData);
         //EURUSD.setParameters(data[0],data[1],)
         
-        //Quote test = new EURUSD();
-        //test.setParameters(subData[0]);
-        //test.printParams();
         
         /*Observable EURUSD = new Quote();
         Observable USDJPY = new Quote();
