@@ -25,9 +25,12 @@ public class Main /*implements Runnable*/{
         //client.setPipChange(50);
         
        	//run(myAPI,webrates,quotes);
+        
+        myAPI.AndroidListener();
+        
        	
-        test t = new test();
-        t.conexion();
+        //test t = new test();
+        //t.conexion();
         
         //myAPI.printData(subData);
         //EURUSD.setParameters(data[0],data[1],)

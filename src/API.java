@@ -1,6 +1,9 @@
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +14,12 @@ import org.jsoup.nodes.*;
 import org.jsoup.select.Elements;
 
 public class API {
+	
+	private static ServerSocket ss;
+	private static Socket s;
+	private static BufferedReader br;
+	private static InputStreamReader isr;
+	private static String message = "";
 	
 	public List<Observable> parseHTML(URL url) throws Exception{
 		List<Observable> quotes = new ArrayList<Observable>();
@@ -54,6 +63,32 @@ public class API {
 					new BigDecimal(cols.get(6).text().toString()),
 					new BigDecimal(cols.get(7).text().toString()),
 					new BigDecimal(cols.get(8).text().toString()));
+	}
+	
+	public void AndroidListener() {
+		try {
+			while(true)
+			{
+			ss = new ServerSocket(4444);
+			System.out.println("Server running at port 4444");
+			s=ss.accept();
+			
+			isr = new InputStreamReader(s.getInputStream());
+			br = new BufferedReader(isr);
+			message = br.readLine();
+			
+			System.out.println(message);
+			isr.close();
+			br.close();
+			ss.close();
+			s.close();
+			}
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	//Convertir el String[] con todos los datos a un arreglo de arreglos, separando los de cada quote
