@@ -65,6 +65,12 @@ public class API {
 					new BigDecimal(cols.get(8).text().toString()));
 	}
 	
+	public void Subscribe(Observable q, ClienteFree client) {
+		q.addObserver(client);
+		client.addQuote(q);
+    	client.setOldValues(q);
+	}
+	
 	public void AndroidListener() {
 		try {
 			while(true)

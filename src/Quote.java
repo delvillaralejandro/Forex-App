@@ -2,6 +2,7 @@ import java.math.BigDecimal;
 import java.util.Observable;
 
 public class Quote extends Observable{
+	
 	private String Name;
 	private long timestamp;
 	private BigDecimal bidBig;
@@ -11,6 +12,11 @@ public class Quote extends Observable{
 	private BigDecimal High;
 	private BigDecimal Low;
 	private BigDecimal Open;
+	
+	private BigDecimal oldbidBig;
+	private int oldbidPoints;
+	private BigDecimal oldofferBig;
+	private int oldofferPoints;
 	
 	public Quote(
 			String Name,
@@ -43,6 +49,11 @@ public class Quote extends Observable{
 		this.High = w.High;
 		this.Low = w.Low;
 		this.Open = w.Open;
+		
+		this.oldbidBig = w.bidBig;
+		this.oldbidPoints = w.bidPoints;
+		this.oldofferBig = w.offerBig;
+		this.oldofferPoints = w.offerPoints;
 		
 	}
 	
@@ -83,6 +94,13 @@ public class Quote extends Observable{
 		measurementsChanged();
 	}
 	
+	public void setOldParameters(Observable q) {
+		this.oldbidBig = ((Quote) q).bidBig;
+		this.oldbidPoints = ((Quote) q).bidPoints;
+		this.oldofferBig = ((Quote) q).offerBig;
+		this.oldofferPoints = ((Quote) q).offerPoints;
+	}
+	
 	public String getName() {
 		return this.Name;
 	}
@@ -110,6 +128,19 @@ public class Quote extends Observable{
 	public BigDecimal getOpen() {
 		return this.Open;
 	}
+	public BigDecimal getOldBidBig() {
+		return this.oldbidBig;
+	}
+	public int getOldBidPoints() {
+		return this.oldbidPoints;
+	}
+	public BigDecimal getOldOfferBig() {
+		return this.oldofferBig;
+	}
+	public int getOldOfferPoints() {
+		return this.oldofferPoints;
+	}
+	
 
 	public void printParams() {
 		System.out.println(getName() + " " 
@@ -137,8 +168,8 @@ public class Quote extends Observable{
 	
 	public void measurementsChanged() {
 		setChanged();
-		notifyObservers(new Wrapper(Name,timestamp,bidBig,bidPoints,offerBig,offerPoints,High,Low,Open));
-		//notifyObservers(this);
+		//notifyObservers(new Wrapper(Name,timestamp,bidBig,bidPoints,offerBig,offerPoints,High,Low,Open));
+		notifyObservers(this);
 	}
 
 }

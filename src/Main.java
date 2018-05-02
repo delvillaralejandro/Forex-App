@@ -17,10 +17,11 @@ public class Main{
         quotes = myAPI.parseHTML(webrates);
         ClienteFree client = new ClienteFree();
 
-        for(Observable q : quotes) {
-        	q.addObserver(client);
-        	client.setOldValues(q);
-        }
+        /*for(Observable q : quotes) {
+        	myAPI.Subscribe(q, client);
+        }*/
+        
+        myAPI.Subscribe(quotes.get(0), client);
         
         //client.setPipChange(50);
 

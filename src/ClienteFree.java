@@ -1,4 +1,6 @@
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -9,24 +11,10 @@ public class ClienteFree implements Observer{
 	private String LastName;
 	private String Email;
 	private String Password;
-	private int pipChange = 50;
+	private int pipChange = 4;
+	private int maxSubs = 10;
 	
-	private String oldQuoteName;
-	private BigDecimal oldbidBig;
-	private int oldbidPoints;
-	private BigDecimal oldofferBig;
-	private int oldofferPoints;
-	
-	private String quoteName;
-	private long timestamp;
-	private BigDecimal bidBig;
-	private int bidPoints;
-	private BigDecimal offerBig;
-	private int offerPoints;
-	private BigDecimal High;
-	private BigDecimal Low;
-	private BigDecimal Open;
-	
+	List<Observable> subscriptions = new ArrayList<Observable>(maxSubs);
 	
 	public ClienteFree(Observable quote) {
 		this.clientID = (int) Math.ceil(Math.random()*1000);
@@ -44,8 +32,35 @@ public class ClienteFree implements Observer{
 	public ClienteFree() {
 		this.clientID = (int) Math.ceil(Math.random()*1000);
 	}
-
+	
+	public void addQuote(Observable q) {
+		if(subscriptions.size() < maxSubs) {
+			subscriptions.add(q);
+		}
+		else {
+			System.out.println("Upgrade your account");
+		}
+	}
+	
 	public void update(Observable observable, Object arg) {
+		if(arg == null) {
+			System.out.println("Null Argument");
+		}else 
+		{
+			for(Observable q : subscriptions) {
+				if( ((Quote) q).getName().equals( ((Quote) arg).getName() ) ) {
+					subscriptions.set(subscriptions.indexOf(q), (Quote) arg);
+				}
+			}
+			
+			 if(evaluateChange(arg)){
+				 setOldValues(arg);
+				 printParams(arg);
+			 }
+		}
+	}
+
+	/*public void update(Observable observable, Object arg) {
 		if(arg == null) {
 			System.out.println("Null Argument");
 		}else 
@@ -64,12 +79,9 @@ public class ClienteFree implements Observer{
 			
 			
 			 if(evaluateChange()){
-				 this.oldQuoteName = this.quoteName;
-				 //this.oldtimestamp = this.timestamp;
-				 this.oldbidBig = this.bidBig;
-				 this.oldbidPoints = this.bidPoints;
-				 this.oldofferBig = this.offerBig;
-				 this.oldofferPoints = this.offerPoints;
+
+				 setOldValues(arg);
+				 
 				 //System.out.println("Old values set");
 				 printParams();
 			 }
@@ -77,10 +89,11 @@ public class ClienteFree implements Observer{
 			
 			//printParams();
 		}
-	}
+	}*/
 	
-	public boolean evaluateChange() {
-		if( Math.abs(oldbidPoints - bidPoints) >= pipChange) {
+	public boolean evaluateChange(Object q) {
+		Quote quote = (Quote) q;
+		if( Math.abs(quote.getOldBidPoints() - quote.getBidPoints()) >= pipChange) {
 			return true;
 		}
 		else {
@@ -99,30 +112,30 @@ public class ClienteFree implements Observer{
 		if(arg == null) {
 			System.out.println("Null Argument");
 		}else {
-			Quote wrap = (Quote) arg;
+			Quote quote = (Quote) arg;
+			quote.setOldParameters((Quote) arg);
 			
-			this.oldQuoteName = wrap.getName();
-			//this.timestamp = wrap.getTimestamp();
-			this.oldbidBig = wrap.getBidBig();
-			this.oldbidPoints = wrap.getBidPoints();
-			this.oldofferBig = wrap.getOfferBig();
-			this.oldofferPoints = wrap.getOfferPoints();
-			//System.out.println("Old values set");
+			for(Observable q : subscriptions) {
+				if( ((Quote) q).getName().equals( quote.getName() ) ) {
+					subscriptions.set(subscriptions.indexOf(q), quote);
+				}
+			}
 		}
 	}
 	
-	public void printParams() {
+	public void printParams(Object arg) {
+		Quote q = ((Quote) arg);
 		System.out.println(
 				"ID de Cliente: " 
 				+ this.clientID + " "
-				+ this.quoteName + " " 
-				+ this.timestamp + " "
-				+ this.bidBig.toString()
-				+ this.bidPoints + " "
-				+ this.offerBig.toString()
-				+ this.offerPoints + " "
-				+ this.High + " "
-				+ this.Low + " "
-				+ this.Open);
+				+ q.getName() + " " 
+				+ q.getTimestamp() + " "
+				+ q.getBidBig().toString()
+				+ q.getBidPoints() + " "
+				+ q.getOfferBig().toString()
+				+ q.getOfferPoints() + " "
+				+ q.getHigh() + " "
+				+ q.getLow() + " "
+				+ q.getOpen());
 	}
 }
