@@ -1,4 +1,5 @@
 import java.net.*;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -7,6 +8,31 @@ import java.util.Observer;
 public class Main{
 
 	public static void main(String[] args) throws Exception {
+		
+		/*
+		Connection conn = null;
+	    try {
+	      conn = getConnection();
+	      System.out.println("conn=" + conn);
+	      conn.setAutoCommit(false);
+	      List<Object> list = new ArrayList<Object>();
+	      list.add("This is a short string.");
+	      list.add(new Integer(1234));
+	      //list.add(new Date(0));
+	      
+	      ClienteFree cliente = new ClienteFree("Humberto","Mercury","Humberto@cetys.edu.mx","caca");
+	      long objectID = writeJavaObject(conn, cliente);
+	      conn.commit();
+	      System.out.println("Serialized objectID => " + objectID);
+	      ClienteFree cliente2 = (ClienteFree) getObject(conn, objectID);
+	      System.out.println("[After De-Serialization] Client ID= " + cliente2.getID() + " Client name= "+ cliente2.getName());
+	    } catch (Exception e) {
+	      e.printStackTrace();
+	    } finally {
+	      conn.close();
+	    }
+	  }
+		 */
 		
 		// API
 		API myAPI = new API();
@@ -28,47 +54,8 @@ public class Main{
        	run(myAPI,webrates,quotes);
         
         //myAPI.AndroidListener();
-       	
         //test t = new test();
         //t.conexion();
-        
-        //myAPI.printData(subData);
-        //EURUSD.setParameters(data[0],data[1],)
-        
-        
-        /*Observable EURUSD = new Quote();
-        Observable USDJPY = new Quote();
-        Observable GBPUSD = new Quote();
-        Observable EURGBP = new Quote();
-        Observable USDCHF = new Quote();
-        Observable EURJPY = new Quote();
-        Observable EURCHF = new Quote();
-        Observable USDCAD = new Quote();
-        Observable AUDUSD = new Quote();
-        Observable GBPJPY = new Quote();
-        
-        quotes.add(EURUSD);
-        quotes.add(USDJPY);
-        quotes.add(GBPUSD);
-        quotes.add(EURGBP);
-        quotes.add(USDCHF);
-        quotes.add(EURJPY);
-        quotes.add(EURCHF);
-        quotes.add(USDCAD);
-        quotes.add(AUDUSD);
-        quotes.add(GBPJPY);
-        
-        int cont = 0;
-        for(Observable q : quotes) {
-        	q.addObserver(new ClienteFree(q));
-        }
-        
-        //while(true) {
-        	for(Observable q : quotes) {
-        		((Quote) q).setParameters(subData[cont]);
-        		cont++;
-        	}
-        //}*/
        	
 	}
 	

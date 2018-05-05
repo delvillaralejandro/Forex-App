@@ -1,11 +1,14 @@
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-public class ClienteFree implements Observer{
+public class ClienteFree implements Observer, Serializable{
 	
+	
+	private static final long serialVersionUID = 1L;
 	private int clientID;
 	private String Name;
 	private String LastName;
@@ -59,37 +62,6 @@ public class ClienteFree implements Observer{
 			 }
 		}
 	}
-
-	/*public void update(Observable observable, Object arg) {
-		if(arg == null) {
-			System.out.println("Null Argument");
-		}else 
-		{
-			Wrapper wrap = (Wrapper) arg;
-			
-			this.quoteName = wrap.Name;
-			this.timestamp = wrap.timestamp;
-			this.bidBig = wrap.bidBig;
-			this.bidPoints = wrap.bidPoints;
-			this.offerBig = wrap.offerBig;
-			this.offerPoints = wrap.offerPoints;
-			this.High = wrap.High;
-			this.Low = wrap.Low;
-			this.Open = wrap.Open;
-			
-			
-			 if(evaluateChange()){
-
-				 setOldValues(arg);
-				 
-				 //System.out.println("Old values set");
-				 printParams();
-			 }
-			 
-			
-			//printParams();
-		}
-	}*/
 	
 	public boolean evaluateChange(Object q) {
 		Quote quote = (Quote) q;

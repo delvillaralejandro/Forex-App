@@ -1,10 +1,17 @@
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
+import java.sql.PreparedStatement;
+//import java.sql.Connection;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -12,6 +19,13 @@ import java.util.Observable;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.*;
 import org.jsoup.select.Elements;
+//import com.mysql.jdbc.*;
+import java.io.ByteArrayInputStream;
+import java.io.ObjectInputStream;
+import java.nio.ByteBuffer;
+import java.sql.*;
+import java.sql.Date;
+import java.util.*;
 
 public class API {
 	
@@ -20,6 +34,8 @@ public class API {
 	private static BufferedReader br;
 	private static InputStreamReader isr;
 	private static String message = "";
+	private static final String WRITE_OBJECT_SQL = "INSERT INTO java_objects(name, object_value) VALUES (?, ?)";	  
+	private static final String READ_OBJECT_SQL = "SELECT object_value FROM java_objects WHERE id = ?";
 	
 	public List<Observable> parseHTML(URL url) throws Exception{
 		List<Observable> quotes = new ArrayList<Observable>();
@@ -96,43 +112,72 @@ public class API {
 		}
 		
 	}
+
+	public Connection getConnection() throws Exception {
+		String driver = "org.gjt.mm.mysql.Driver";
+	    String url = "jdbc:mysql://localhost:3306/forex";
+	    String username = "root";
+	    String password = "123456";
+	    Class.forName(driver);
+	    Connection conn = DriverManager.getConnection(url, username, password);
+	    return conn;
+	  }
 	
-	//Convertir el String[] con todos los datos a un arreglo de arreglos, separando los de cada quote
-	/*public String[][] paramData(String[] data) {
-		String[][] subData = new String[10][9];
-		
-		int cont1 = 0;
-		int cont2 = 0;
-		
-		for(String st : data) {
-			if(cont2 == 8) {
-				subData[cont1][cont2] = st;
-				cont1++;
-				cont2 = 0;
-			}else {
-				subData[cont1][cont2] = st;
-				cont2++;
-			}
-		}
-		
-		return subData;
-	}
-	
-	
-	public void printData(String[] array) {
-		for(String st : array) {
-    		System.out.println(st);	
-    	}
-	}
-	
-	public void printData(String[][] array) {
-		for(String[] stv : array) {
-			System.out.println("nuevo vector:");
-			for(String st : stv) {
-				System.out.println(st);
-			}
-			System.out.println("");
-		}
-	}
-	*/
+	public long writeJavaObject(Connection conn, Object object) throws Exception {
+	    String className = object.getClass().getName();
+	    PreparedStatement pstmt = conn.prepareStatement(WRITE_OBJECT_SQL, Statement.RETURN_GENERATED_KEYS);
+
+	    // set input parameters
+	    pstmt.setString(1, className);
+	    pstmt.setObject(2, object);
+	    pstmt.executeUpdate();
+
+	    // get the generated key for the id
+	    ResultSet rs = pstmt.getGeneratedKeys();
+	    int id = -1;
+	    if (rs.next()) {
+	      id = rs.getInt(1);
+	    }
+
+	    rs.close();
+	    pstmt.close();
+	    System.out.println("writeJavaObject: done serializing: " + className);
+	    return id;
+	  }
+	  
+	  public Object getObject(Connection conn, long id) throws Exception
+	  {
+	      Object rmObj=null;
+	      PreparedStatement ps;
+	      ResultSet rs;
+
+	      ps=conn.prepareStatement(READ_OBJECT_SQL);
+	      ps.setLong(1, id);
+	      rs=ps.executeQuery();
+
+	      if(rs.next())
+	      {
+	          ByteArrayInputStream bais;
+
+	          ObjectInputStream ins;
+
+	          try {
+
+	          bais = new ByteArrayInputStream(rs.getBytes("object_value"));
+
+	          ins = new ObjectInputStream(bais);
+
+	          rmObj = ins.readObject();
+
+	          }
+	          catch (Exception e) {
+
+	          e.printStackTrace();
+	          }
+
+	      }
+
+	      return rmObj;
+	  }
 }
+
