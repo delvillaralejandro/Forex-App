@@ -1,3 +1,4 @@
+package com.example.stark.QuoteNote;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -5,7 +6,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
@@ -19,6 +22,7 @@ import java.util.Observable;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.*;
 import org.jsoup.select.Elements;
+
 //import com.mysql.jdbc.*;
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
@@ -34,11 +38,18 @@ public class API {
 	private static BufferedReader br;
 	private static InputStreamReader isr;
 	private static String message = "";
+	
 	private static final String WRITE_OBJECT_SQL = "INSERT INTO java_objects(name, object_value) VALUES (?, ?)";	  
 	private static final String READ_OBJECT_SQL = "SELECT object_value FROM java_objects WHERE id = ?";
 	
-	public List<Observable> parseHTML(URL url) throws Exception{
-		List<Observable> quotes = new ArrayList<Observable>();
+	ServerSocket serverSocket;
+	Socket socket;
+	ObjectOutputStream oos;
+	ObjectInputStream ois;
+	
+	
+	public List<Quote> parseHTML(URL url) throws Exception{
+		List<Quote> quotes = new ArrayList<Quote>();
 		BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
 		Document doc = Jsoup.parse(url, 5000);
 		Element table = doc.select("table").get(0); //select the first table.
@@ -53,17 +64,16 @@ public class API {
 		return quotes;
 	}
 	
-	public void setQuoteParameters(URL url, List<Observable> quotes) throws Exception{
+	public void setQuoteParameters(URL url, List<Quote> quotes) throws Exception{
 		BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
 		Document doc = Jsoup.parse(url, 5000);
 		Element table = doc.select("table").get(0); //select the first table.
 		Elements rows = table.select("tr");
 
 		int cont = 0;
-		for(Observable q : quotes) {
+		for(Quote q : quotes) {
 			Elements cols = rows.get(cont).select("td");
-			q = ( (Quote) q );
-			((Quote) q).setParameters(parseCol(cols));
+			q.setParameters(parseCol(cols));
 			cont++;
 		}
 		
@@ -81,29 +91,65 @@ public class API {
 					new BigDecimal(cols.get(8).text().toString()));
 	}
 	
-	public void Subscribe(Observable q, ClienteFree client) {
+	public void Subscribe(Quote q, ClienteFree client) {
 		q.addObserver(client);
 		client.addQuote(q);
     	client.setOldValues(q);
 	}
 	
-	public void AndroidListener() {
+	
+	public void openAndroidConnection(int port) {
 		try {
 			while(true)
 			{
-			ss = new ServerSocket(4444);
-			System.out.println("Server running at port 4444");
-			s=ss.accept();
-			
-			isr = new InputStreamReader(s.getInputStream());
-			br = new BufferedReader(isr);
-			message = br.readLine();
-			
-			System.out.println(message);
-			isr.close();
-			br.close();
-			ss.close();
-			s.close();
+			ss = new ServerSocket(port);
+			System.out.println("Server running at port " + port);
+			s = ss.accept();
+			//return s;
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//return s;
+	}
+	
+	public void closeAndroidConnection() {
+		try {
+			while(true)
+			{
+				isr.close();
+				br.close();
+				ss.close();
+				s.close();
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void AndroidListener(String message) {
+		try {
+			while(true)
+			{
+				isr = new InputStreamReader(s.getInputStream());
+				br = new BufferedReader(isr);
+				message = br.readLine();
+				
+				switch(message) {
+				case "quoteRequest":
+					//Send Quotelist to Android
+					break;
+				case "LoginAutent":
+					//Send Client to Android
+					break;
+					
+				}
+				isr.close();
+				br.close();
+				ss.close();
+				s.close();
 			}
 			
 		} catch (IOException e) {
@@ -123,9 +169,9 @@ public class API {
 	    return conn;
 	  }
 	
-	public long writeJavaObject(Connection conn, Object object) throws Exception {
+	public long writeJavaObject(Connection conn, Object object, String statement) throws Exception {
 	    String className = object.getClass().getName();
-	    PreparedStatement pstmt = conn.prepareStatement(WRITE_OBJECT_SQL, Statement.RETURN_GENERATED_KEYS);
+	    PreparedStatement pstmt = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
 
 	    // set input parameters
 	    pstmt.setString(1, className);
@@ -158,26 +204,96 @@ public class API {
 	      if(rs.next())
 	      {
 	          ByteArrayInputStream bais;
-
 	          ObjectInputStream ins;
-
 	          try {
-
 	          bais = new ByteArrayInputStream(rs.getBytes("object_value"));
-
 	          ins = new ObjectInputStream(bais);
-
 	          rmObj = ins.readObject();
-
 	          }
 	          catch (Exception e) {
-
 	          e.printStackTrace();
 	          }
-
 	      }
-
 	      return rmObj;
 	  }
+		
+		public void connectToServer(int port) {
+	        try {
+	        	serverSocket = new ServerSocket(port);
+	        	System.out.println("Server up and ready for connection...");
+	            socket = serverSocket.accept();
+	            System.out.println("Connection succesful");
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	    }
+
+	    public void sendObject(Object o) {
+	        try {
+	            oos = new ObjectOutputStream(socket.getOutputStream());
+	            oos.writeObject(o);
+				oos.flush();
+	            //oos.close();
+	            
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    
+	    public ClienteFree receiveClient() throws Exception{
+	        try {
+	            ois = new ObjectInputStream(socket.getInputStream());
+	            ClienteFree cliente = (ClienteFree)(ois.readObject());
+	            ois.close();
+	            return cliente;
+	            
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	            return null;
+	        }
+	    }
+	    
+	    public List<Quote> receiveQuote() throws Exception{
+	        try {
+	        	ois = (ObjectInputStream) socket.getInputStream();
+	            List<Quote> newQuotes = (List<Quote>)(ois.readObject());
+	            ois.close();
+	            return newQuotes;
+	            
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	            return null;
+	        }
+	    }
+
+	    public void STOP() {
+	        stopOutput();
+	        stopServer();
+	    }
+
+	    public void stopServer() {
+	        try {
+	            socket.close();
+	            serverSocket.close();
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	    }
+
+	    public void stopOutput() {
+	        try {
+	            oos.close();
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    
+	    public void stopInput() {
+	        try {
+	            ois.close();
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	    }
 }
 

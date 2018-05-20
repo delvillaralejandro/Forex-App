@@ -1,3 +1,4 @@
+package com.example.stark.QuoteNote;
 import java.sql.*;
 //download .jr into classpath to use
 public class test {

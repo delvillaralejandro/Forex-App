@@ -1,8 +1,11 @@
+package com.example.stark.QuoteNote;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Observable;
 
-public class Quote extends Observable{
-	
+public class Quote extends Observable implements Serializable{
+
+	private static final long serialVersionUID = 100L;
 	private String Name;
 	private long timestamp;
 	private BigDecimal bidBig;
@@ -94,11 +97,11 @@ public class Quote extends Observable{
 		measurementsChanged();
 	}
 	
-	public void setOldParameters(Observable q) {
-		this.oldbidBig = ((Quote) q).bidBig;
-		this.oldbidPoints = ((Quote) q).bidPoints;
-		this.oldofferBig = ((Quote) q).offerBig;
-		this.oldofferPoints = ((Quote) q).offerPoints;
+	public void setOldParameters(Quote q) {
+		this.oldbidBig = q.bidBig;
+		this.oldbidPoints = q.bidPoints;
+		this.oldofferBig = q.offerBig;
+		this.oldofferPoints = q.offerPoints;
 	}
 	
 	public String getName() {

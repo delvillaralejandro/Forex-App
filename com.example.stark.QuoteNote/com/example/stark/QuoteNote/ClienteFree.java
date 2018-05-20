@@ -1,0 +1,191 @@
+package com.example.stark.QuoteNote;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
+import com.google.gson.*;
+
+public class ClienteFree implements Observer, Serializable{
+	
+	
+	private static final long serialVersionUID = 1L;
+	private String firebaseToken;
+	public final static String AUTH_KEY_FCM = "AAAAbrKfQIw:APA91bERoKBYAq9CkG9mClGHrtp1GBHkhiGetdZ_MsquUZTRVyIkCOtX9KGxujCe5tGbAsZ3Xsj7j-sxf8v3mGWiZ2lbLeHY7ATv_pSl8uN9mAkviaBZwUGBOHJnDwa-hYa8MquhfRba";
+	public final static String API_URL_FCM = "https://fcm.googleapis.com/fcm/send";
+	
+	private int clientID;
+	private String Name;
+	private String LastName;
+	private String Email;
+	private String Password;
+	private int pipChange = 4;
+	private int maxSubs = 10;
+	
+	List<Quote> subscriptions = new ArrayList<Quote>(maxSubs);
+	
+	public ClienteFree(Observable quote) {
+		this.clientID = (int) Math.ceil(Math.random()*1000);
+		quote.addObserver(this);
+	}
+	
+	public ClienteFree(String name, String last, String email,String pass) {
+		this.clientID = (int) Math.ceil(Math.random()*1000);
+		this.Name = name;
+		this.LastName = last;
+		this.Email = email;
+		this.Password = pass;
+	}
+	
+	public ClienteFree() {
+		this.clientID = (int) Math.ceil(Math.random()*1000);
+	}
+	
+	public void addQuote(Quote q) {
+		if(subscriptions.size() < maxSubs) {
+			subscriptions.add(q);
+		}
+		else {
+			System.out.println("Upgrade your account");
+		}
+	}
+	
+	public void update(Observable observable, Object arg){
+		if(arg == null) {
+			System.out.println("Null Argument");
+		}else 
+		{
+			for(Observable q : subscriptions) {
+				if( ((Quote) q).getName().equals( ((Quote) arg).getName() ) ) {
+					subscriptions.set(subscriptions.indexOf(q), (Quote) arg);
+				}
+			}
+			
+			 if(evaluateChange(arg)){
+				 setOldValues(arg);
+				 printParams(arg);
+				 try {
+					 pushFCMNotification(this.firebaseToken,arg);
+				 }catch(Exception e) {
+					 e.printStackTrace();
+				 }
+			 }
+		}
+	}
+	
+	public static void pushFCMNotification(String DeviceIdKey, Object q) throws Exception {
+
+        String authKey = AUTH_KEY_FCM; // You FCM AUTH key
+        String FMCurl = API_URL_FCM;
+
+        URL url = new URL(FMCurl);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+        conn.setUseCaches(false);
+        conn.setDoInput(true);
+        conn.setDoOutput(true);
+
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Authorization", "key=" + authKey);
+        conn.setRequestProperty("Content-Type", "application/json");
+
+        String notfnStr = "{\"body\": \"Quote has Updated\", \"title\": \""+((Quote)q).getName()+"\"}";
+        String bodyStr = "{\"priority\": \"high\", \"to\": \""+ DeviceIdKey +"\", " +
+                "\"notification\": " + notfnStr +"}";
+
+        System.out.println("### input: " + bodyStr);
+        
+        /*JsonObject data = new JsonObject();
+        data.add("to",DeviceIdKey.trim());
+        JsonObject info = new JsonObject();
+        info.put("title", "QuoteNote"); // Notification title
+        info.put("body", ((Quote) q).printParams());; // Notification body
+        data.put("data", info);
+        */
+
+        OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+        wr.write(bodyStr);
+        //wr.write(data.toString());
+        wr.flush();
+        wr.close();
+
+        int responseCode = conn.getResponseCode();
+        System.out.println("Response Code : " + responseCode);
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+
+    }
+	
+	public boolean evaluateChange(Object q) {
+		Quote quote = (Quote) q;
+		if( Math.abs(quote.getOldBidPoints() - quote.getBidPoints()) >= pipChange) {
+			return true;
+		}
+		else {
+			//if((this.oldbidBig.doubleValue() != this.bidBig.doubleValue())) {
+			//	return true;
+			//}
+			return false;
+		}
+	}
+	
+	public void setPipChange(int pip) {
+		this.pipChange = pip;
+	}
+	
+	public int getPipChange() {
+		return this.pipChange;
+	}
+	
+	public void setToken(String token) {
+		this.firebaseToken = token;
+	}
+	
+	public String getToken() {
+		return this.firebaseToken;
+	}
+	
+	public void setOldValues(Object arg) {
+		if(arg == null) {
+			System.out.println("Null Argument");
+		}else {
+			Quote quote = (Quote) arg;
+			quote.setOldParameters((Quote) arg);
+			
+			for(Observable q : subscriptions) {
+				if( ((Quote) q).getName().equals( quote.getName() ) ) {
+					subscriptions.set(subscriptions.indexOf(q), quote);
+				}
+			}
+		}
+	}
+	
+	public void printParams(Object arg) {
+		Quote q = ((Quote) arg);
+		System.out.println(
+				"ID de Cliente: " 
+				+ this.clientID + " "
+				+ q.getName() + " " 
+				+ q.getTimestamp() + " "
+				+ q.getBidBig().toString()
+				+ q.getBidPoints() + " "
+				+ q.getOfferBig().toString()
+				+ q.getOfferPoints() + " "
+				+ q.getHigh() + " "
+				+ q.getLow() + " "
+				+ q.getOpen());
+	}
+}
