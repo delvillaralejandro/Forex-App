@@ -1,7 +1,10 @@
 package com.example.stark.QuoteNote;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class Wrapper {
+public class Wrapper implements Serializable{
+	
+	private static final long serialVersionUID = 200L;
 	public String Name;
 	public long timestamp;
 	public BigDecimal bidBig;

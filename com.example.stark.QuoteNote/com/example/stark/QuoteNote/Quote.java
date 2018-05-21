@@ -5,11 +5,11 @@ import java.util.Observable;
 
 public class Quote extends Observable implements Serializable{
 
-	private static final long serialVersionUID = 100L;
+	public static final long serialVersionUID = 100L;
 	private String Name;
 	private long timestamp;
 	private BigDecimal bidBig;
-	private int bidPoints;
+	private int bidPoints; 
 	private BigDecimal offerBig;
 	private int offerPoints;
 	private BigDecimal High;

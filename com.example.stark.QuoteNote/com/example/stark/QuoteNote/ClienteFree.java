@@ -15,7 +15,7 @@ import com.google.gson.*;
 public class ClienteFree implements Observer, Serializable{
 	
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 501L;
 	private String firebaseToken;
 	public final static String AUTH_KEY_FCM = "AAAAbrKfQIw:APA91bERoKBYAq9CkG9mClGHrtp1GBHkhiGetdZ_MsquUZTRVyIkCOtX9KGxujCe5tGbAsZ3Xsj7j-sxf8v3mGWiZ2lbLeHY7ATv_pSl8uN9mAkviaBZwUGBOHJnDwa-hYa8MquhfRba";
 	public final static String API_URL_FCM = "https://fcm.googleapis.com/fcm/send";

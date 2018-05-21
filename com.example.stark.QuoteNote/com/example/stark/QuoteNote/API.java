@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.ServerSocket;
@@ -22,6 +23,10 @@ import java.util.Observable;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.*;
 import org.jsoup.select.Elements;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
 
 //import com.mysql.jdbc.*;
 import java.io.ByteArrayInputStream;
@@ -46,7 +51,9 @@ public class API {
 	Socket socket;
 	ObjectOutputStream oos;
 	ObjectInputStream ois;
-	
+	int PORT = 7777;
+	Gson gson = new Gson();
+	String quoteGson;
 	
 	public List<Quote> parseHTML(URL url) throws Exception{
 		List<Quote> quotes = new ArrayList<Quote>();
@@ -97,6 +104,10 @@ public class API {
     	client.setOldValues(q);
 	}
 	
+	public void updateQuoteList(String newquotes) {
+		this.quoteGson = newquotes;
+	}
+	
 	
 	public void openAndroidConnection(int port) {
 		try {
@@ -129,33 +140,56 @@ public class API {
 		}
 	}
 	
-	public void AndroidListener(String message) {
+	public void AndroidListener() {
 		try {
-			while(true)
-			{
-				isr = new InputStreamReader(s.getInputStream());
-				br = new BufferedReader(isr);
-				message = br.readLine();
-				
-				switch(message) {
-				case "quoteRequest":
-					//Send Quotelist to Android
-					break;
-				case "LoginAutent":
-					//Send Client to Android
-					break;
-					
-				}
-				isr.close();
-				br.close();
-				ss.close();
-				s.close();
-			}
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			ServerSocket serverSocket = new ServerSocket(PORT);
+            System.out.println("Server Started and listening to the port " + PORT);
+          
+	            //Server is running always. This is done using this while(true) loop
+	            while(true)
+	            {
+	                //Reading the message from the client
+	                socket = serverSocket.accept();
+	                
+	                ois = new ObjectInputStream(socket.getInputStream());
+	                String request = gson.fromJson((String)(ois.readObject()),String.class);
+	                System.out.println("Message received from client is "+request);
+	 
+	                //Multiplying the number by 2 and forming the return message
+	                String returnMessage = "Default message";
+	                try
+	                {
+	                    switch(request) {
+	                    case "Quotes":
+	                    	returnMessage = Main.quotesGson;
+	                    	break;
+	                    case "login":
+	                    	//select from login
+	                    	break;
+	                    default:
+	                    	break;
+	                    }
+	                    	
+	                }
+	                catch(JsonParseException e)
+	                {
+	                    returnMessage = "Please send a proper message";
+	                }
+	 
+	                //Sending the response back to the client.
+	                sendObject(returnMessage);
+	            }
+		}catch(Exception e) {
 			e.printStackTrace();
-		}
+		}finally{
+            try
+            {
+                socket.close();
+            }
+            catch(Exception e){
+            	e.printStackTrace();
+            }
+        }
 		
 	}
 
@@ -234,9 +268,11 @@ public class API {
 	            oos.writeObject(o);
 				oos.flush();
 	            //oos.close();
+				System.out.println("Object sent");
 	            
 	        } catch (IOException e) {
 	            e.printStackTrace();
+	            System.out.println("Object not sent");
 	        }
 	    }
 	    
@@ -253,18 +289,32 @@ public class API {
 	        }
 	    }
 	    
-	    public List<Quote> receiveQuote() throws Exception{
-	        try {
-	        	ois = (ObjectInputStream) socket.getInputStream();
-	            List<Quote> newQuotes = (List<Quote>)(ois.readObject());
-	            ois.close();
-	            return newQuotes;
-	            
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	            return null;
-	        }
-	    }
+	    public String receiveRequestGson() throws Exception{
+            try {
+                //ois = new ObjectInputStream(socket.getInputStream());
+
+                String request = gson.fromJson((String)(ois.readObject()),String.class);
+                //ois.close();
+                return request;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+	    
+	    public List<Quote> receiveQuoteGson() throws Exception{
+            try {
+                //ois = new ObjectInputStream(socket.getInputStream());
+                Type quoteListType = new TypeToken<List<Quote>>(){}.getType();
+
+                List<Quote> newQuotes = gson.fromJson((String)(ois.readObject()), quoteListType);
+                //ois.close();
+                return newQuotes;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
 
 	    public void STOP() {
 	        stopOutput();
