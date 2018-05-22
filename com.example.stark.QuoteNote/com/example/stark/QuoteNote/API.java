@@ -165,6 +165,11 @@ public class API {
 	                    	break;
 	                    case "login":
 	                    	//select from login
+	                    	/* jalarClienteSQL()
+	                    	 * ClienteFree newClient = (ClienteFree) getObject(conn, objectID);
+	                    	 * returnMessage = gson.toJson((ClienteFree) getObject(conn, objectID));
+	                    	 * 
+	                    	 */
 	                    	break;
 	                    default:
 	                    	break;
@@ -310,6 +315,19 @@ public class API {
                 List<Quote> newQuotes = gson.fromJson((String)(ois.readObject()), quoteListType);
                 //ois.close();
                 return newQuotes;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+	    
+	    public ClienteFree receiveClientGson() throws Exception{
+            try {
+                //ois = new ObjectInputStream(socket.getInputStream());
+
+                ClienteFree newCliente = gson.fromJson((String)(ois.readObject()), ClienteFree.class);
+                //ois.close();
+                return newCliente;
             } catch (IOException e) {
                 e.printStackTrace();
                 return null;
