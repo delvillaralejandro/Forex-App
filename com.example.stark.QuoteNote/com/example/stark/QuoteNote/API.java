@@ -51,9 +51,11 @@ public class API {
 	Socket socket;
 	ObjectOutputStream oos;
 	ObjectInputStream ois;
-	int PORT = 7777;
+	int PORT = 8888;
 	Gson gson = new Gson();
 	String quoteGson;
+	Type HashMapType = new TypeToken<HashMap<String, String>>() { }.getType();
+	Map<String,String> requestMap;
 	
 	public List<Quote> parseHTML(URL url) throws Exception{
 		List<Quote> quotes = new ArrayList<Quote>();
@@ -80,7 +82,16 @@ public class API {
 		int cont = 0;
 		for(Quote q : quotes) {
 			Elements cols = rows.get(cont).select("td");
-			q.setParameters(parseCol(cols));
+			//q.setParameters(parseCol(cols));
+			q.setParameters(cols.get(0).text().toString(),
+					Long.parseLong(cols.get(1).text().toString()),
+					new BigDecimal(cols.get(2).text().toString()),
+					Integer.parseInt(cols.get(3).text().toString()),
+					new BigDecimal(cols.get(4).text().toString()),
+					Integer.parseInt(cols.get(5).text().toString()),
+					new BigDecimal(cols.get(6).text().toString()),
+					new BigDecimal(cols.get(7).text().toString()),
+					new BigDecimal(cols.get(8).text().toString()));
 			cont++;
 		}
 		
@@ -102,6 +113,11 @@ public class API {
 		q.addObserver(client);
 		client.addQuote(q);
     	client.setOldValues(q);
+	}
+	
+	public void Unsubscribe(Quote q, ClienteFree client) {
+		q.deleteObserver(client);
+		client.removeQuote(q);
 	}
 	
 	public void updateQuoteList(String newquotes) {
@@ -152,17 +168,56 @@ public class API {
 	                socket = serverSocket.accept();
 	                
 	                ois = new ObjectInputStream(socket.getInputStream());
-	                String request = gson.fromJson((String)(ois.readObject()),String.class);
-	                System.out.println("Message received from client is "+request);
+	                requestMap = gson.fromJson((String)(ois.readObject()),HashMapType);
+	                
+	                //String request = gson.fromJson((String)(ois.readObject()),String.class);
+	                System.out.println("Message received from client is "+requestMap.get("request"));
 	 
 	                //Multiplying the number by 2 and forming the return message
 	                String returnMessage = "Default message";
 	                try
 	                {
-	                    switch(request) {
-	                    case "Quotes":
+	                    switch(requestMap.get("request")) {
+	                    case "quotes":
 	                    	returnMessage = Main.quotesGson;
+	                    	//returnMessage = gson.toJson(Main.quotes);
 	                    	break;
+	                    	
+	                    case "subscribe":
+	                    	try {
+		                    	
+		                    	for(Quote quote : Main.quotes) {
+		                    		if(gson.fromJson(requestMap.get("quote"), Quote.class).getName().contains(quote.getName())) {
+		                    			Subscribe(quote, gson.fromJson(requestMap.get("client"), ClienteFree.class));
+		                    			System.out.println(quote.getName() + " Quote found!");
+		                    			break;
+		                    		}
+		                    		else {
+		                    			System.out.println(quote.getName() + " Quote not found");
+		                    		}
+		                    	}
+		                    	returnMessage = gson.toJson(gson.fromJson(requestMap.get("client"), ClienteFree.class));
+		                    	break;	
+	                    	}catch(Exception e) {
+	                    		e.printStackTrace();
+	                    	}
+	                    	
+	                    case "unsubscribe":
+	                    	try {
+		                    	
+		                    	for(Quote quote : Main.quotes) {
+		                    		if(gson.fromJson(requestMap.get("quote"), Quote.class).getName().contains(quote.getName())) {
+		                    			Unsubscribe(quote, gson.fromJson(requestMap.get("client"), ClienteFree.class));
+		                    			System.out.println(quote.getName() + " Quote found!");
+		                    			break;
+		                    		}
+		                    	}
+		                    	returnMessage = gson.toJson(gson.fromJson(requestMap.get("client"), ClienteFree.class));
+		                    	break;	
+	                    	}catch(Exception e) {
+	                    		e.printStackTrace();
+	                    	}
+	                    	
 	                    case "login":
 	                    	//select from login
 	                    	/* jalarClienteSQL()
@@ -196,6 +251,10 @@ public class API {
             }
         }
 		
+	}
+	
+	public String getQuoteGson(List<Quote> list) {
+		return gson.toJson(list);
 	}
 
 	public Connection getConnection() throws Exception {

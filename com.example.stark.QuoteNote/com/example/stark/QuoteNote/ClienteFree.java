@@ -56,6 +56,10 @@ public class ClienteFree implements Observer, Serializable{
 		}
 	}
 	
+	public void removeQuote(Quote q) {
+		subscriptions.remove(q);
+	}
+	
 	public void update(Observable observable, Object arg){
 		if(arg == null) {
 			System.out.println("Null Argument");
@@ -101,13 +105,6 @@ public class ClienteFree implements Observer, Serializable{
 
         System.out.println("### input: " + bodyStr);
         
-        /*JsonObject data = new JsonObject();
-        data.add("to",DeviceIdKey.trim());
-        JsonObject info = new JsonObject();
-        info.put("title", "QuoteNote"); // Notification title
-        info.put("body", ((Quote) q).printParams());; // Notification body
-        data.put("data", info);
-        */
 
         OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
         wr.write(bodyStr);

@@ -62,9 +62,8 @@ public class Main{
         	myAPI.Subscribe(q, client);
         }*/
         
-        myAPI.Subscribe(quotes.get(0), client);
-        myAPI.Subscribe(quotes.get(1), client2);
-        
+        //myAPI.Subscribe(quotes.get(0), client);
+        //myAPI.Subscribe(quotes.get(1), client2);
         //client.setPipChange(50);
         
         try {
@@ -73,6 +72,9 @@ public class Main{
             	try {
             		while(true){
                 		myAPI.setQuoteParameters(webrates, quotes);
+                		//String newQuotesGson = myAPI.gson.toJson(quotes);
+                		List<Quote> temp = quotes;
+                		//quotesGson = new String(myAPI.gson.toJson(temp));
                 		quotesGson = myAPI.gson.toJson(myAPI.parseHTML(webrates));
                 		Thread.sleep(3000);
                 	}
