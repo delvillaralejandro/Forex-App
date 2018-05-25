@@ -147,6 +147,15 @@ public class ClienteFree implements Observer, Serializable{
 		return this.pipChange;
 	}
 	
+	public String getEmail() {
+		return this.Email;
+	}
+	
+	public String getPassword() {
+		return this.Password;
+	}
+	
+	
 	public void setToken(String token) {
 		this.firebaseToken = token;
 	}

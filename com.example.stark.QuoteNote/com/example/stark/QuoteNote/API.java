@@ -43,15 +43,15 @@ public class API {
 	private static BufferedReader br;
 	private static InputStreamReader isr;
 	private static String message = "";
-	
-	private static final String WRITE_OBJECT_SQL = "INSERT INTO java_objects(name, object_value) VALUES (?, ?)";	  
-	private static final String READ_OBJECT_SQL = "SELECT object_value FROM java_objects WHERE id = ?";
+
+	public static final String WRITE_OBJECT_SQL = "INSERT INTO java_objects(name, object_value,mail,password) VALUES (?, ?, ?, ?)";	  
+	public static final String READ_OBJECT_SQL = "SELECT object_value FROM java_objects WHERE mail=? and password=?";
 	
 	ServerSocket serverSocket;
 	Socket socket;
 	ObjectOutputStream oos;
 	ObjectInputStream ois;
-	int PORT = 8888;
+	int PORT = 7777;
 	Gson gson = new Gson();
 	String quoteGson;
 	Type HashMapType = new TypeToken<HashMap<String, String>>() { }.getType();
@@ -219,12 +219,26 @@ public class API {
 	                    	}
 	                    	
 	                    case "login":
-	                    	//select from login
-	                    	/* jalarClienteSQL()
-	                    	 * ClienteFree newClient = (ClienteFree) getObject(conn, objectID);
-	                    	 * returnMessage = gson.toJson((ClienteFree) getObject(conn, objectID));
-	                    	 * 
-	                    	 */
+	                    	try {
+	                    		String[] autent = Mapeando(requestMap.get("body"));
+	                    	ClienteFree newClient = (ClienteFree) getObject(getConnection(),autent[0],autent[1]);
+	                    	returnMessage = gson.toJson(newClient);
+	                    	}
+	                    	catch(Exception e) {
+	                    		e.printStackTrace();
+	                    	}
+	                    	break;
+	                    case "register":
+	                    	try {
+	                    		writeJavaObject(getConnection(), gson.fromJson(requestMap.get("body"),ClienteFree.class), 
+	                    				gson.fromJson(requestMap.get("body"),ClienteFree.class).getEmail(),
+	                    				gson.fromJson(requestMap.get("body"),ClienteFree.class).getPassword(), WRITE_OBJECT_SQL);
+		                    returnMessage = "Registro exitoso";
+
+	                    	}
+	                    	catch(Exception e) {
+	                    		e.printStackTrace();
+	                    	}
 	                    	break;
 	                    default:
 	                    	break;
@@ -261,19 +275,22 @@ public class API {
 		String driver = "org.gjt.mm.mysql.Driver";
 	    String url = "jdbc:mysql://localhost:3306/forex";
 	    String username = "root";
-	    String password = "123456";
+	    String password = "root";
 	    Class.forName(driver);
 	    Connection conn = DriverManager.getConnection(url, username, password);
 	    return conn;
 	  }
 	
-	public long writeJavaObject(Connection conn, Object object, String statement) throws Exception {
+	public long writeJavaObject(Connection conn, Object object, String mail, String password, String statement) throws Exception {
 	    String className = object.getClass().getName();
+	   
 	    PreparedStatement pstmt = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
 
 	    // set input parameters
 	    pstmt.setString(1, className);
 	    pstmt.setObject(2, object);
+	    pstmt.setString(3, mail);
+	    pstmt.setObject(4, password);
 	    pstmt.executeUpdate();
 
 	    // get the generated key for the id
@@ -289,14 +306,15 @@ public class API {
 	    return id;
 	  }
 	  
-	  public Object getObject(Connection conn, long id) throws Exception
+	  public Object getObject(Connection conn, String mail, String password) throws Exception
 	  {
 	      Object rmObj=null;
 	      PreparedStatement ps;
 	      ResultSet rs;
 
 	      ps=conn.prepareStatement(READ_OBJECT_SQL);
-	      ps.setLong(1, id);
+	      ps.setString(1, mail);
+	      ps.setString(2, password);
 	      rs=ps.executeQuery();
 
 	      if(rs.next())
@@ -422,5 +440,16 @@ public class API {
 	            e.printStackTrace();
 	        }
 	    }
+	    
+	    public String[] Mapeando(String s) {
+			   if (s.contains(",")) {
+				   
+				   return s.split(",");
+		
+				} else {
+				    throw new IllegalArgumentException("String " + s + " does not contain ,");
+				}
+			  
+		   }
 }
 
