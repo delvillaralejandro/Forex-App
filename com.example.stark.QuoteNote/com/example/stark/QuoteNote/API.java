@@ -51,7 +51,7 @@ public class API {
 	Socket socket;
 	ObjectOutputStream oos;
 	ObjectInputStream ois;
-	int PORT = 7777;
+	int PORT = 12345;
 	Gson gson = new Gson();
 	String quoteGson;
 	Type HashMapType = new TypeToken<HashMap<String, String>>() { }.getType();
@@ -170,10 +170,8 @@ public class API {
 	                ois = new ObjectInputStream(socket.getInputStream());
 	                requestMap = gson.fromJson((String)(ois.readObject()),HashMapType);
 	                
-	                //String request = gson.fromJson((String)(ois.readObject()),String.class);
 	                System.out.println("Message received from client is "+requestMap.get("request"));
 	 
-	                //Multiplying the number by 2 and forming the return message
 	                String returnMessage = "Default message";
 	                try
 	                {
@@ -266,10 +264,6 @@ public class API {
         }
 		
 	}
-	
-	public String getQuoteGson(List<Quote> list) {
-		return gson.toJson(list);
-	}
 
 	public Connection getConnection() throws Exception {
 		String driver = "org.gjt.mm.mysql.Driver";
@@ -332,25 +326,12 @@ public class API {
 	      }
 	      return rmObj;
 	  }
-		
-		public void connectToServer(int port) {
-	        try {
-	        	serverSocket = new ServerSocket(port);
-	        	System.out.println("Server up and ready for connection...");
-	            socket = serverSocket.accept();
-	            System.out.println("Connection succesful");
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
-	    }
 
 	    public void sendObject(Object o) {
 	        try {
 	            oos = new ObjectOutputStream(socket.getOutputStream());
 	            oos.writeObject(o);
 				oos.flush();
-	            //oos.close();
-				System.out.println("Object sent");
 	            
 	        } catch (IOException e) {
 	            e.printStackTrace();
@@ -358,88 +339,6 @@ public class API {
 	        }
 	    }
 	    
-	    public ClienteFree receiveClient() throws Exception{
-	        try {
-	            ois = new ObjectInputStream(socket.getInputStream());
-	            ClienteFree cliente = (ClienteFree)(ois.readObject());
-	            ois.close();
-	            return cliente;
-	            
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	            return null;
-	        }
-	    }
-	    
-	    public String receiveRequestGson() throws Exception{
-            try {
-                //ois = new ObjectInputStream(socket.getInputStream());
-
-                String request = gson.fromJson((String)(ois.readObject()),String.class);
-                //ois.close();
-                return request;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-	    
-	    public List<Quote> receiveQuoteGson() throws Exception{
-            try {
-                //ois = new ObjectInputStream(socket.getInputStream());
-                Type quoteListType = new TypeToken<List<Quote>>(){}.getType();
-
-                List<Quote> newQuotes = gson.fromJson((String)(ois.readObject()), quoteListType);
-                //ois.close();
-                return newQuotes;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-	    
-	    public ClienteFree receiveClientGson() throws Exception{
-            try {
-                //ois = new ObjectInputStream(socket.getInputStream());
-
-                ClienteFree newCliente = gson.fromJson((String)(ois.readObject()), ClienteFree.class);
-                //ois.close();
-                return newCliente;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-	    public void STOP() {
-	        stopOutput();
-	        stopServer();
-	    }
-
-	    public void stopServer() {
-	        try {
-	            socket.close();
-	            serverSocket.close();
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
-	    }
-
-	    public void stopOutput() {
-	        try {
-	            oos.close();
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
-	    }
-	    
-	    public void stopInput() {
-	        try {
-	            ois.close();
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
-	    }
 	    
 	    public String[] Mapeando(String s) {
 			   if (s.contains(",")) {

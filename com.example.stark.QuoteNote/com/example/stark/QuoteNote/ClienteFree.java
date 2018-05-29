@@ -57,7 +57,15 @@ public class ClienteFree implements Observer, Serializable{
 	}
 	
 	public void removeQuote(Quote q) {
-		subscriptions.remove(q);
+		try {
+            for(Quote quote : subscriptions){
+                if(q.getName().contains(quote.getName())){
+                    subscriptions.remove(quote);
+                }
+            }
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
 	}
 	
 	public void update(Observable observable, Object arg){

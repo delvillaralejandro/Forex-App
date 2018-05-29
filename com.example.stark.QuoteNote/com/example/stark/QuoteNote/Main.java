@@ -15,7 +15,6 @@ public class Main{
 	public static API myAPI;
 	public static URL webrates;
     public static List<Quote> quotes;
-    public static final int PORT = 5555;
     public static String quotesGson;
     //public static Gson gson = new Gson();
     static String WRITE_OBJECT_SQL = "INSERT INTO java_objects(name, object_value,mail,password) VALUES (?, ?, ?, ?)";	
@@ -54,14 +53,6 @@ public class Main{
         client.setToken("clYm_BOo62Q:APA91bGf4fQpmNtVuIiIrw1-7986S8caLk2-gfxPIJ8x8gM3K0VRp4OvlkCHNwQIFH-6pIp6SUR74qX5KwjxYvYjYTUfFQzKU5BmZzFNufBEgzNbrCueTYfHLcnantvMui0UWxm0x8ep");
         ClienteFree client2 = new ClienteFree();
         client2.setToken("daDmHJWj-bE:APA91bFDNSUpnOmbZkMCK4XIru-jg7g61HdGDc4lq9NoyJafqBd65bgpzzHZMdq1sYM52tUah2SGH44EFhrS4YOtgaD7xWeTCxCW7FBlgRiydCAyJ2eTKweOXnUFu9M56t2a3AeiZioe");
-
-        /*for(Quote q : quotes) {
-        	myAPI.Subscribe(q, client);
-        }*/
-        
-        //myAPI.Subscribe(quotes.get(0), client);
-        //myAPI.Subscribe(quotes.get(1), client2);
-        //client.setPipChange(50);
         
         try {
         	new Thread(new Runnable() {
@@ -69,9 +60,6 @@ public class Main{
             	try {
             		while(true){
                 		myAPI.setQuoteParameters(webrates, quotes);
-                		//String newQuotesGson = myAPI.gson.toJson(quotes);
-                		List<Quote> temp = quotes;
-                		//quotesGson = new String(myAPI.gson.toJson(temp));
                 		quotesGson = myAPI.gson.toJson(myAPI.parseHTML(webrates));
                 		Thread.sleep(3000);
                 	}
@@ -98,41 +86,6 @@ public class Main{
         }catch(Exception e) {
         	e.printStackTrace();
         }
-        
-        
-        /*try {	
-			myAPI.connectToServer(PORT);
-
-			new Thread(new Runnable() {
-	            public void run(){
-	            	try {
-	            	while(true) {
-	            			myAPI.sendObject(quoteList);
-	            			//myAPI.sendObject(quotes);
-	            			Thread.sleep(3000);
-	            			//client = server.receiveClient();
-	            			//System.out.println(client.getName());
-	            			//Thread.sleep(3000);
-	        				}
-	            	}catch(Exception e) {
-	            		e.printStackTrace();
-	            	}
-	            }
-	        }).start();
-	       
-			//}
-		} catch (Exception e) {
-			e.printStackTrace();
-			myAPI.stopOutput();
-			myAPI.stopServer();
-		}*/
-        
-        
-       	//run(myAPI,webrates,quotes);
-        
-        //myAPI.AndroidListener();
-        //test t = new test();
-        //t.conexion()
        	
 	}
 	
