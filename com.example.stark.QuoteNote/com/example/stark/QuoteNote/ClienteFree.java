@@ -155,6 +155,14 @@ public class ClienteFree implements Observer, Serializable{
 		return this.pipChange;
 	}
 	
+	public String getName() {
+		return this.Name;
+	}
+	
+	public int getID() {
+		return this.clientID;
+	}
+	
 	public String getEmail() {
 		return this.Email;
 	}

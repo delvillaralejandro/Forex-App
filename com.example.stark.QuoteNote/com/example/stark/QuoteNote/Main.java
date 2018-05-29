@@ -21,27 +21,6 @@ public class Main{
 
 	public static void main(String[] args) throws Exception {
 		
-	/*	
-		Connection conn = null;
-	    try {
-	      conn = myAPI.getConnection();
-	      System.out.println("conn=" + conn);
-	      conn.setAutoCommit(false);
-	     
-	      ClienteFree cliente = new ClienteFree("Humberto","Mercury","test@test.com","test");
-	      long objectID = myAPI.writeJavaObject(conn, cliente, "test@test.com","test",WRITE_OBJECT_SQL);
-	      conn.commit();
-	      System.out.println("Serialized objectID => " + objectID);
-	      ClienteFree cliente2 = (ClienteFree) myAPI.getObject(conn,"test@test.com","test");
-	      System.out.println("[After De-Serialization] Client ID= " + cliente2.getID() + " Client name= "+ cliente2.getName());
-	    } catch (Exception e) {
-	      e.printStackTrace();
-	    } finally {
-	      conn.close();
-	   }
-		 
-	*/
-		
 		// API
 		myAPI = new API();
         webrates = new URL("http://webrates.truefx.com/rates/connect.html?f=html");
