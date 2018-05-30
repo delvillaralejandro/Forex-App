@@ -44,7 +44,8 @@ public class API {
 	private static InputStreamReader isr;
 	private static String message = "";
 
-	public static final String WRITE_OBJECT_SQL = "INSERT INTO java_objects(name, object_value,mail,password) VALUES (?, ?, ?, ?)";	  
+	public static final String WRITE_OBJECT_SQL = "INSERT INTO java_objects(name, object_value,mail,password) VALUES (?, ?, ?, ?)";
+	public static final String UPDATE_OBJECT_SQL = "UPDATE java_objects SET object_value=? WHERE mail=? AND password=?";
 	public static final String READ_OBJECT_SQL = "SELECT object_value FROM java_objects WHERE mail=? and password=?";
 	
 	ServerSocket serverSocket;
@@ -219,7 +220,7 @@ public class API {
 	                    case "login":
 	                    	try {
 	                    		String[] autent = Mapeando(requestMap.get("body"));
-	                    		ClienteFree newClient = (ClienteFree) getObject(getConnection(),autent[0],autent[1]);
+	                    		ClienteFree newClient = (ClienteFree) getObject(getConnection(),autent[0],autent[1],READ_OBJECT_SQL);
 	                    		returnMessage = gson.toJson(newClient);
 	                    	}
 	                    	catch(Exception e) {
@@ -231,10 +232,20 @@ public class API {
 	                    		writeJavaObject(getConnection(), gson.fromJson(requestMap.get("body"),ClienteFree.class), 
 	                    				gson.fromJson(requestMap.get("body"),ClienteFree.class).getEmail(),
 	                    				gson.fromJson(requestMap.get("body"),ClienteFree.class).getPassword(), WRITE_OBJECT_SQL);
-		                    returnMessage = "Registro exitoso";
+		                    returnMessage = "Succesful registration";
 
 	                    	}
 	                    	catch(Exception e) {
+	                    		e.printStackTrace();
+	                    	}
+	                    	break;
+	                    case "logout":
+	                    	try {
+	                    		updateJavaObject(getConnection(), gson.fromJson(requestMap.get("body"),ClienteFree.class), 
+	                    				gson.fromJson(requestMap.get("body"),ClienteFree.class).getEmail(),
+	                    				gson.fromJson(requestMap.get("body"),ClienteFree.class).getPassword(), UPDATE_OBJECT_SQL);
+	                    		returnMessage = "Succesful logout";
+	                    	}catch(Exception e) {
 	                    		e.printStackTrace();
 	                    	}
 	                    	break;
@@ -284,7 +295,7 @@ public class API {
 	    pstmt.setString(1, className);
 	    pstmt.setObject(2, object);
 	    pstmt.setString(3, mail);
-	    pstmt.setObject(4, password);
+	    pstmt.setString(4, password);
 	    pstmt.executeUpdate();
 
 	    // get the generated key for the id
@@ -298,15 +309,40 @@ public class API {
 	    pstmt.close();
 	    System.out.println("writeJavaObject: done serializing: " + className);
 	    return id;
+	    }
+	
+	public long updateJavaObject(Connection conn, Object object, String mail, String password, String statement) throws Exception {
+	    String className = object.getClass().getName();
+	   
+	    PreparedStatement pstmt = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+
+	    // set input parameters
+	    pstmt.setObject(1, object);
+	    pstmt.setString(2, mail);
+	    pstmt.setString(3, password);
+	    pstmt.executeUpdate();
+
+	    // get the generated key for the id
+	    ResultSet rs = pstmt.getGeneratedKeys();
+	    int id = -1;
+	    if (rs.next()) {
+	      id = rs.getInt(1);
+	    }
+
+	    rs.close();
+	    pstmt.close();
+	    System.out.println("updateJavaObject: done serializing: " + className);
+	    return id;
 	  }
+	
 	  
-	  public Object getObject(Connection conn, String mail, String password) throws Exception
+	  public Object getObject(Connection conn, String mail, String password, String statement) throws Exception
 	  {
 	      Object rmObj=null;
 	      PreparedStatement ps;
 	      ResultSet rs;
 
-	      ps=conn.prepareStatement(READ_OBJECT_SQL);
+	      ps=conn.prepareStatement(statement);
 	      ps.setString(1, mail);
 	      ps.setString(2, password);
 	      rs=ps.executeQuery();
