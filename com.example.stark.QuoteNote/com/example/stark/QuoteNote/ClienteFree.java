@@ -12,7 +12,7 @@ import java.util.Observable;
 import java.util.Observer;
 import com.google.gson.*;
 
-public class ClienteFree implements Observer, Serializable{
+public class ClienteFree implements Serializable{
 	
 	
 	private static final long serialVersionUID = 501L;
@@ -30,21 +30,12 @@ public class ClienteFree implements Observer, Serializable{
 	
 	List<Quote> subscriptions = new ArrayList<Quote>(maxSubs);
 	
-	public ClienteFree(Observable quote) {
-		this.clientID = (int) Math.ceil(Math.random()*1000);
-		quote.addObserver(this);
-	}
-	
 	public ClienteFree(String name, String last, String email,String pass) {
 		this.clientID = (int) Math.ceil(Math.random()*1000);
 		this.Name = name;
 		this.LastName = last;
 		this.Email = email;
 		this.Password = pass;
-	}
-	
-	public ClienteFree() {
-		this.clientID = (int) Math.ceil(Math.random()*1000);
 	}
 	
 	public void addQuote(Quote q) {
@@ -61,6 +52,7 @@ public class ClienteFree implements Observer, Serializable{
             for(Quote quote : subscriptions){
                 if(q.getName().contains(quote.getName())){
                     subscriptions.remove(quote);
+                    break;
                 }
             }
         }catch(Exception e) {
@@ -68,20 +60,19 @@ public class ClienteFree implements Observer, Serializable{
         }
 	}
 	
-	public void update(Observable observable, Object arg){
+	public void update(Quote observable, Object arg){
 		if(arg == null) {
 			System.out.println("Null Argument");
 		}else 
 		{
-			for(Observable q : subscriptions) {
-				if( ((Quote) q).getName().equals( ((Quote) arg).getName() ) ) {
+			for(Quote q : subscriptions) {
+				if( (q).getName().equals( ((Quote) arg).getName() ) ) {
 					subscriptions.set(subscriptions.indexOf(q), (Quote) arg);
 				}
 			}
 			
 			 if(evaluateChange(arg)){
 				 setOldValues(arg);
-				 printParams(arg);
 				 try {
 					 pushFCMNotification(this.firebaseToken,arg);
 				 }catch(Exception e) {
@@ -91,7 +82,7 @@ public class ClienteFree implements Observer, Serializable{
 		}
 	}
 	
-	public static void pushFCMNotification(String DeviceIdKey, Object q) throws Exception {
+	public void pushFCMNotification(String DeviceIdKey, Object q) throws Exception {
 
         String authKey = AUTH_KEY_FCM; // You FCM AUTH key
         String FMCurl = API_URL_FCM;
@@ -140,9 +131,6 @@ public class ClienteFree implements Observer, Serializable{
 			return true;
 		}
 		else {
-			//if((this.oldbidBig.doubleValue() != this.bidBig.doubleValue())) {
-			//	return true;
-			//}
 			return false;
 		}
 	}
@@ -157,6 +145,10 @@ public class ClienteFree implements Observer, Serializable{
 	
 	public String getName() {
 		return this.Name;
+	}
+	
+	public String getLastName() {
+		return this.LastName;
 	}
 	
 	public int getID() {
@@ -187,27 +179,11 @@ public class ClienteFree implements Observer, Serializable{
 			Quote quote = (Quote) arg;
 			quote.setOldParameters((Quote) arg);
 			
-			for(Observable q : subscriptions) {
-				if( ((Quote) q).getName().equals( quote.getName() ) ) {
+			for(Quote q : subscriptions) {
+				if( q.getName().equals( quote.getName() ) ) {
 					subscriptions.set(subscriptions.indexOf(q), quote);
 				}
 			}
 		}
-	}
-	
-	public void printParams(Object arg) {
-		Quote q = ((Quote) arg);
-		System.out.println(
-				"ID de Cliente: " 
-				+ this.clientID + " "
-				+ q.getName() + " " 
-				+ q.getTimestamp() + " "
-				+ q.getBidBig().toString()
-				+ q.getBidPoints() + " "
-				+ q.getOfferBig().toString()
-				+ q.getOfferPoints() + " "
-				+ q.getHigh() + " "
-				+ q.getLow() + " "
-				+ q.getOpen());
 	}
 }

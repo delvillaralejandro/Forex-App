@@ -125,38 +125,6 @@ public class API {
 		this.quoteGson = newquotes;
 	}
 	
-	
-	public void openAndroidConnection(int port) {
-		try {
-			while(true)
-			{
-			ss = new ServerSocket(port);
-			System.out.println("Server running at port " + port);
-			s = ss.accept();
-			//return s;
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//return s;
-	}
-	
-	public void closeAndroidConnection() {
-		try {
-			while(true)
-			{
-				isr.close();
-				br.close();
-				ss.close();
-				s.close();
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
 	public void AndroidListener() {
 		try {
 			ServerSocket serverSocket = new ServerSocket(PORT);
@@ -191,9 +159,6 @@ public class API {
 		                    			System.out.println(quote.getName() + " Quote found!");
 		                    			break;
 		                    		}
-		                    		else {
-		                    			System.out.println(quote.getName() + " Quote not found");
-		                    		}
 		                    	}
 		                    	returnMessage = gson.toJson(gson.fromJson(requestMap.get("client"), ClienteFree.class));
 		                    	break;	
@@ -220,7 +185,7 @@ public class API {
 	                    case "login":
 	                    	try {
 	                    		String[] autent = Mapeando(requestMap.get("body"));
-	                    		ClienteFree newClient = (ClienteFree) getObject(getConnection(),autent[0],autent[1],READ_OBJECT_SQL);
+	                    		ClienteFree newClient = (ClienteFree) getObject(getConnection(),autent[0],autent[1]);
 	                    		returnMessage = gson.toJson(newClient);
 	                    	}
 	                    	catch(Exception e) {
@@ -336,13 +301,13 @@ public class API {
 	  }
 	
 	  
-	  public Object getObject(Connection conn, String mail, String password, String statement) throws Exception
+	  public Object getObject(Connection conn, String mail, String password) throws Exception
 	  {
 	      Object rmObj=null;
 	      PreparedStatement ps;
 	      ResultSet rs;
 
-	      ps=conn.prepareStatement(statement);
+	      ps=conn.prepareStatement(READ_OBJECT_SQL);
 	      ps.setString(1, mail);
 	      ps.setString(2, password);
 	      rs=ps.executeQuery();
@@ -378,7 +343,7 @@ public class API {
 	    
 	    public String[] Mapeando(String s) {
 			   if (s.contains(",")) {
-				   
+			 
 				   return s.split(",");
 		
 				} else {

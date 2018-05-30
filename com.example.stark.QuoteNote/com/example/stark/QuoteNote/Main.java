@@ -27,12 +27,7 @@ public class Main{
         quotes = new ArrayList<Quote>();
         quotes = myAPI.parseHTML(webrates);
         quotesGson = myAPI.gson.toJson(quotes);
-        
-        ClienteFree client = new ClienteFree();
-        client.setToken("clYm_BOo62Q:APA91bGf4fQpmNtVuIiIrw1-7986S8caLk2-gfxPIJ8x8gM3K0VRp4OvlkCHNwQIFH-6pIp6SUR74qX5KwjxYvYjYTUfFQzKU5BmZzFNufBEgzNbrCueTYfHLcnantvMui0UWxm0x8ep");
-        ClienteFree client2 = new ClienteFree();
-        client2.setToken("daDmHJWj-bE:APA91bFDNSUpnOmbZkMCK4XIru-jg7g61HdGDc4lq9NoyJafqBd65bgpzzHZMdq1sYM52tUah2SGH44EFhrS4YOtgaD7xWeTCxCW7FBlgRiydCAyJ2eTKweOXnUFu9M56t2a3AeiZioe");
-        
+              
         try {
         	new Thread(new Runnable() {
             public void run(){
